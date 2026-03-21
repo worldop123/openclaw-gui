@@ -6,14 +6,16 @@ import {
   Users, 
   Package, 
   Settings,
-  Zap
+  Zap,
+  Building
 } from 'lucide-react'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
 
   const navItems = [
-    { path: '/', label: '团队', icon: Home },
+    { path: '/', label: '公司团队', icon: Building },
+    { path: '/classic', label: '经典风格', icon: Home },
     { path: '/sessions', label: '会话', icon: MessageSquare },
     { path: '/tools', label: '工具', icon: Wrench },
     { path: '/messages', label: '消息', icon: Zap },
@@ -32,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="font-bold text-xl text-slate-800">OpenClaw</h1>
-              <p className="text-xs text-slate-500">GUI v1.0</p>
+              <p className="text-xs text-slate-500">Company GUI</p>
             </div>
           </div>
         </div>
@@ -66,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-800">团队在线</p>
-                <p className="text-xs text-slate-500">4 / 6 活跃</p>
+                <p className="text-xs text-slate-500">6 位成员</p>
               </div>
             </div>
           </div>
