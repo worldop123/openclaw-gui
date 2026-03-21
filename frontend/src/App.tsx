@@ -1,7 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import TeamDashboard from './pages/TeamDashboard'
 import CompanyTeamDashboard from './pages/CompanyTeamDashboard'
+import TeamDashboard from './pages/TeamDashboard'
+import Features from './pages/Features'
 import Sessions from './pages/Sessions'
 import Tools from './pages/Tools'
 import Messages from './pages/Messages'
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<CompanyTeamDashboard />} />
         <Route path="/classic" element={<TeamDashboard />} />
+        <Route path="/features" element={<Features />} />
         <Route path="/sessions" element={<Sessions />} />
         <Route path="/tools" element={<Tools />} />
         <Route path="/messages" element={<Messages />} />
