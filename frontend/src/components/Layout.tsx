@@ -12,13 +12,15 @@ import {
   X,
   Bell,
   Search,
-  User
+  User,
+  UserRound
 } from 'lucide-react'
 import { useStore } from '../store'
 import { cn } from '../lib/utils'
 
 const navigation = [
-  { name: '仪表板', href: '/', icon: LayoutDashboard },
+  { name: '团队仪表盘', href: '/', icon: UserRound },
+  { name: '系统仪表板', href: '/dashboard', icon: LayoutDashboard },
   { name: '会话管理', href: '/sessions', icon: Users },
   { name: '工具管理', href: '/tools', icon: Wrench },
   { name: '工作流', href: '/workflow', icon: Workflow },

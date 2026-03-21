@@ -8,6 +8,7 @@ import Layout from './components/Layout'
 
 // Pages
 import Dashboard from './pages/Dashboard'
+import TeamDashboard from './pages/TeamDashboard'
 import Sessions from './pages/Sessions'
 import Tools from './pages/Tools'
 import Workflow from './pages/Workflow'
@@ -37,7 +38,9 @@ function AppContent() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<TeamDashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/team" element={<TeamDashboard />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/workflow" element={<Workflow />} />
