@@ -8,7 +8,6 @@ import {
   Wifi,
   WifiOff
 } from 'lucide-react'
-import { useOpenClaw } from '../hooks/useOpenClaw'
 
 // 员工类型定义
 type EmployeeStatus = 'working' | 'idle' | 'busy' | 'away'
@@ -131,8 +130,8 @@ const statusColors: Record<EmployeeStatus, string> = {
 const formatTimeAgo = (date: Date): string => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
   if (seconds < 60) return '刚刚'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前'
-  return `${Math.floor(seconds / 3600)}小时前'
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前`
+  return `${Math.floor(seconds / 3600)}小时前`
 }
 
 export default function TeamDashboard() {
@@ -140,19 +139,8 @@ export default function TeamDashboard() {
   const [activities] = useState<ActivityItem[]>(initialActivities)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
   
-  // 使用 OpenClaw 连接
-  const { 
-    status: openclawStatus,
-    connect,
-    disconnect,
-    sendCommand,
-    callTool,
-    isConnected,
-    isConnecting
-  } = useOpenClaw({
-    gatewayUrl: 'ws://localhost:18789',
-    autoReconnect: true
-  })
+  const [isConnected, setIsConnected] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
 
   // 模拟实时更新
   useEffect(() => {
@@ -186,15 +174,14 @@ export default function TeamDashboard() {
   // 处理连接按钮
   const handleConnect = () => {
     if (isConnected) {
-      disconnect()
+      setIsConnected(false)
     } else {
-      connect()
+      setIsConnecting(true)
+      setTimeout(() => {
+        setIsConnected(true)
+        setIsConnecting(false)
+      }, 1500)
     }
-  }
-
-  // 测试发送命令
-  const handleTestCommand = () => {
-    sendCommand('openclaw gateway status', {}, 'main')
   }
 
   return (
@@ -222,18 +209,10 @@ export default function TeamDashboard() {
             <button
               onClick={handleConnect}
               disabled={isConnecting}
-              className={`px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm font-medium transition-colors disabled:opacity-50"
             >
               {isConnected ? '断开' : '连接'}
             </button>
-            {isConnected && (
-              <button
-                onClick={handleTestCommand}
-                className="px-4 py-2 rounded-lg bg-yellow-500/30 hover:bg-yellow-500/40 backdrop-blur-sm font-medium transition-colors"
-              >
-                测试命令
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -337,7 +316,7 @@ export default function TeamDashboard() {
                       <div className="text-sm font-semibold text-slate-700 mb-2">{emp.currentTask}</div>
                       <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
                         <div
-                          className={`h-full rounded-full bg-gradient-to-r ${emp.avatarColor}`}
+                          className={`h-full rounded-full bg-gradient-to-br ${emp.avatarColor}`}
                           style={{ width: `${emp.taskProgress}%` }}
                         />
                       </div>
