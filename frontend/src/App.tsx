@@ -8,6 +8,8 @@ import Tools from './pages/Tools'
 import Messages from './pages/Messages'
 import Skills from './pages/Skills'
 import Settings from './pages/Settings'
+import AISupervisor from './pages/AISupervisor'
+import Guardian from './pages/Guardian'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/messages" element={<Messages />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/supervisor" element={<AISupervisor />} />
+        <Route path="/guardian" element={<Guardian />} />
       </Routes>
     </Layout>
   )

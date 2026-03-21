@@ -8,7 +8,9 @@ import {
   Settings,
   Zap,
   Building,
-  PackageSearch
+  PackageSearch,
+  Shield,
+  AlertTriangle
 } from 'lucide-react'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -22,6 +24,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { path: '/tools', label: '工具', icon: Wrench },
     { path: '/messages', label: '消息', icon: Zap },
     { path: '/skills', label: '技能', icon: Package },
+    { path: '/supervisor', label: 'AI监督', icon: AlertTriangle },
+    { path: '/guardian', label: '守护进程', icon: Shield },
     { path: '/settings', label: '设置', icon: Settings }
   ]
 
@@ -36,12 +40,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="font-bold text-xl text-slate-800">OpenClaw</h1>
-              <p className="text-xs text-slate-500">Company GUI</p>
+              <p className="text-xs text-slate-500">Complete GUI</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path
@@ -69,8 +73,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Users className="h-4 w-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-800">团队在线</p>
-                <p className="text-xs text-slate-500">6 位成员</p>
+                <p className="text-sm font-medium text-slate-800">系统就绪</p>
+                <p className="text-xs text-slate-500">10个功能模块</p>
               </div>
             </div>
           </div>
