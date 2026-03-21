@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { 
   Users, 
-  User, 
-  Bot, 
   PlayCircle,
   CheckCircle2,
   Zap,
-  Activity,
-  Clock
+  Activity
 } from 'lucide-react'
-
-// Simple utility functions
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ')
-}
 
 // 员工类型定义
 type EmployeeStatus = 'working' | 'idle' | 'busy' | 'away'
@@ -33,7 +25,7 @@ interface Employee {
   isAgent: boolean
 }
 
-interface Activity {
+interface ActivityItem {
   id: string
   employeeId: string
   employeeName: string
@@ -104,7 +96,7 @@ const initialEmployees: Employee[] = [
 ]
 
 // 模拟活动数据
-const initialActivities: Activity[] = [
+const initialActivities: ActivityItem[] = [
   {
     id: 'act-001',
     employeeId: 'emp-002',
@@ -133,17 +125,16 @@ const statusColors: Record<EmployeeStatus, string> = {
   away: 'bg-gray-400'
 }
 
-// 状态文本映射
-const statusTexts: Record<EmployeeStatus, string> = {
-  working: '工作中',
-  idle: '空闲',
-  busy: '忙碌',
-  away: '离开'
+const formatTimeAgo = (date: Date): string => {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
+  if (seconds < 60) return '刚刚'
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前`
+  return `${Math.floor(seconds / 3600)}小时前`
 }
 
 export default function TeamDashboard() {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
-  const [activities, setActivities] = useState<Activity[]>(initialActivities)
+  const [activities] = useState<ActivityItem[]>(initialActivities)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
 
   // 模拟实时更新
@@ -167,13 +158,6 @@ export default function TeamDashboard() {
 
     return () => clearInterval(interval)
   }, [])
-
-  const formatTimeAgo = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
-    if (seconds < 60) return '刚刚'
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前`
-    return `${Math.floor(seconds / 3600)}小时前`
-  }
 
   const stats = {
     totalEmployees: employees.length,
