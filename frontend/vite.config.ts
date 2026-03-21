@@ -23,4 +23,11 @@ export default defineConfig({
       },
     },
   },
+  // GitHub Pages deployment configuration
+  base: '/openclaw-gui/',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+  },
 })
