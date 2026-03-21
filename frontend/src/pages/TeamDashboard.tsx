@@ -4,8 +4,11 @@ import {
   PlayCircle,
   CheckCircle2,
   Zap,
-  Activity
+  Activity,
+  Wifi,
+  WifiOff
 } from 'lucide-react'
+import { useOpenClaw } from '../hooks/useOpenClaw'
 
 // 员工类型定义
 type EmployeeStatus = 'working' | 'idle' | 'busy' | 'away'
@@ -128,14 +131,28 @@ const statusColors: Record<EmployeeStatus, string> = {
 const formatTimeAgo = (date: Date): string => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
   if (seconds < 60) return '刚刚'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前`
-  return `${Math.floor(seconds / 3600)}小时前`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟前'
+  return `${Math.floor(seconds / 3600)}小时前'
 }
 
 export default function TeamDashboard() {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
   const [activities] = useState<ActivityItem[]>(initialActivities)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
+  
+  // 使用 OpenClaw 连接
+  const { 
+    status: openclawStatus,
+    connect,
+    disconnect,
+    sendCommand,
+    callTool,
+    isConnected,
+    isConnecting
+  } = useOpenClaw({
+    gatewayUrl: 'ws://localhost:18789',
+    autoReconnect: true
+  })
 
   // 模拟实时更新
   useEffect(() => {
@@ -166,12 +183,59 @@ export default function TeamDashboard() {
     totalTasksCompleted: employees.reduce((sum, e) => sum + e.tasksCompleted, 0)
   }
 
+  // 处理连接按钮
+  const handleConnect = () => {
+    if (isConnected) {
+      disconnect()
+    } else {
+      connect()
+    }
+  }
+
+  // 测试发送命令
+  const handleTestCommand = () => {
+    sendCommand('openclaw gateway status', {}, 'main')
+  }
+
   return (
     <div className="space-y-6 p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 min-h-screen">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white">
-        <h1 className="text-4xl font-bold mb-2">👥 OpenClaw 团队</h1>
-        <p className="text-blue-100 text-lg">查看你的AI团队成员正在做什么，实时监控工作进度！</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">👥 OpenClaw 团队</h1>
+            <p className="text-blue-100 text-lg">查看你的AI团队成员正在做什么，实时监控工作进度！</p>
+          </div>
+          
+          {/* OpenClaw 连接状态 */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm">
+              {isConnected ? (
+                <Wifi className="h-5 w-5" />
+              ) : (
+                <WifiOff className="h-5 w-5" />
+              )}
+              <span className="font-medium">
+                {isConnecting ? '连接中...' : isConnected ? '已连接' : '未连接'}
+              </span>
+            </div>
+            <button
+              onClick={handleConnect}
+              disabled={isConnecting}
+              className={`px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm font-medium transition-colors disabled:opacity-50"
+            >
+              {isConnected ? '断开' : '连接'}
+            </button>
+            {isConnected && (
+              <button
+                onClick={handleTestCommand}
+                className="px-4 py-2 rounded-lg bg-yellow-500/30 hover:bg-yellow-500/40 backdrop-blur-sm font-medium transition-colors"
+              >
+                测试命令
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Bar */}
