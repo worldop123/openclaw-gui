@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # OpenClaw Gateway (必须已经运行)
+  # 注意：OpenClaw Gateway应该已经在主机上运行
+  
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: openclaw-gui-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - openclaw-network
+
+  # Python代理服务
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    container_name: openclaw-gui-proxy
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENCLAW_GATEWAY_HOST=host.docker.internal
+      - OPENCLAW_GATEWAY_PORT=18789
+      - OPENCLAW_AUTH_TOKEN=${OPENCLAW_AUTH_TOKEN:-ef7adab7d41a68c9a33b050395e0edcc4b34e80edf65353c}
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./proxy:/app
+      - /tmp/openclaw:/tmp/openclaw:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - openclaw-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Node.js后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: openclaw-gui-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - OPENCLAW_GATEWAY_URL=ws://host.docker.internal:18789
+      - OPENCLAW_AUTH_TOKEN=${OPENCLAW_AUTH_TOKEN:-ef7adab7d41a68c9a33b050395e0edcc4b34e80edf65353c}
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./backend:/app
+      - /tmp/openclaw:/tmp/openclaw:ro
+    depends_on:
+      - redis
+      - proxy
+    networks:
+      - openclaw-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # React前端
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000
+        - VITE_WS_URL=ws://localhost:5000
+    container_name: openclaw-gui-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - openclaw-network
+    restart: unless-stopped
+
+  # Nginx反向代理（可选）
+  nginx:
+    image: nginx:alpine
+    container_name: openclaw-gui-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
+      - backend
+      - proxy
+    networks:
+      - openclaw-network
+    restart: unless-stopped
+
+networks:
+  openclaw-network:
+    driver: bridge
+
+volumes:
+  redis_data:
