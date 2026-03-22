@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import ThreeDOffice from './pages/ThreeDOffice'
 import OfficeDashboard from './pages/OfficeDashboard'
 import AnimeDashboard from './pages/AnimeDashboard'
 import GameTeamDashboard from './pages/GameTeamDashboard'
@@ -17,7 +18,8 @@ import Guardian from './pages/Guardian'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<OfficeDashboard />} />
+      <Route path="/" element={<ThreeDOffice />} />
+      <Route path="/office" element={<OfficeDashboard />} />
       <Route path="/anime" element={<AnimeDashboard />} />
       <Route path="/*" element={
         <Layout>
