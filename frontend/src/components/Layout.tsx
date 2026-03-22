@@ -17,7 +17,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
 
   const navItems = [
-    { path: '/', label: '公司团队', icon: Building },
+    { path: '/', label: '冒险队', icon: Users },
+    { path: '/company', label: '公司团队', icon: Building },
     { path: '/classic', label: '经典风格', icon: Home },
     { path: '/features', label: '功能总览', icon: PackageSearch },
     { path: '/sessions', label: '会话', icon: MessageSquare },
